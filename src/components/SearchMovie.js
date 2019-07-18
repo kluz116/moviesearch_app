@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 import { Button, Form, FormGroup,  Input } from 'reactstrap';
 import './Movies.css'
 import axios from 'axios'
-import { Card, CardImg,CardBody,CardTitle,CardDeck,Row,Col,Modal, ModalHeader, ModalBody, ModalFooter } from 'reactstrap';
+import { Card, CardImg,CardBody,CardTitle,Container,Row,Col,CardColumns } from 'reactstrap';
+import MovieDetails from './MovieDetails';
+
 
 export default class SearchMovie extends Component {
 
@@ -38,7 +40,7 @@ export default class SearchMovie extends Component {
         })
     }
 
-    Details = id =>{
+    onDetails = id =>{
         axios.get('http://www.omdbapi.com/?i='+id+'&apikey=95632709')
         .then(response =>{
             this.setState(prevState =>({
@@ -55,7 +57,7 @@ export default class SearchMovie extends Component {
 
     render() {
         return (
-        <div>
+        <Container>
             <Row>
                  <Col>
             
@@ -67,49 +69,25 @@ export default class SearchMovie extends Component {
                     </Form>
                </Col>
             </Row>
-            
-                
-                <CardDeck >
+            <Row>
+                 <Col>
+                <CardColumns >
                     {this.state.search.map(item =>
-                       
-                                <Card >
-                                    <CardImg top width="20%" src={item.Poster} alt="Card image cap" />
+                                <Card body outline color="success" >
+                                    <CardImg top width="100%" src={item.Poster} alt="Card image cap" />
                                     <CardBody>
                                     <CardTitle key={item.imdbID}>{item.Title}</CardTitle>
-                                    <Button outline color="success" size="sm" onClick={this.Details.bind(this,item.imdbID)} >Details</Button>
+                                    <Button outline color="success" size="sm" onClick={this.onDetails.bind(this,item.imdbID)} >Details</Button>
                                     </CardBody>
                                 </Card>
          
                     )}
-                    </CardDeck>
+                 </CardColumns>
+                 </Col>
+            </Row>
 
-
-            
-            <Modal isOpen={this.state.modal} toggle={this.Details} className={this.props.className}>
-                <ModalHeader toggle={this.Details}>{this.state.details.Title}</ModalHeader>
-                <ModalBody>
-                     <Col>
-                        <div>
-                            <p> {this.state.details.Plot}</p>
-                            <p> {this.state.details.Year}</p>
-                            <p> {this.state.details.Rated}</p>
-                            <p> {this.state.details.Released}</p>
-                            <p> {this.state.details.Runtime}</p>
-                            <p> {this.state.details.Genre}</p>
-                            <p> {this.state.details.Director}</p>
-                            <p> {this.state.details.Writer}</p>
-                            <p> {this.state.details.Writer}</p>
-                        </div> 
-                     </Col>
-                   
-                </ModalBody>
-                <ModalFooter>
-                    <Button color="primary" onClick={this.Details}>OK</Button>{' '}
-                    <Button color="secondary" onClick={this.Details}>Cancel</Button>
-                </ModalFooter>
-             </Modal>
-                    
-            </div>
+               <MovieDetails modal = {this.state.modal} details ={this.state.details} onDetails = {this.onDetails}/>                  
+            </Container>
         )
     }
 }
